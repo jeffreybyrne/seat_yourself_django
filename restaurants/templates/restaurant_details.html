@@ -2,6 +2,12 @@
 {% block content %}
 <main class='restaurant'>
     <h2>{{ restaurant.name }}</h2>
+    <p>Hours: {{ restaurant.opening_time }} - {{ restaurant.closing_time }}</p>
+    <p>Address: {{ restaurant.address }}</p>
+    <p>Phone Number: {{ restaurant.phone }}</p>
+    <p>{{ restaurant.description }}</p>
+    <img class="restaurant-image" src="{{ restaurant.image }}" alt="">
+
     {% if user.is_authenticated %}
       {% if restaurant.owner == user %}
       <p> <a href="{% url 'restaurant_edit' id=restaurant.pk %}">Edit restaurant details</a> </p>
@@ -22,12 +28,8 @@
         {% endif %}
       {% endif %}
 
-      <p>Hours: {{ restaurant.opening_time }} - {{ restaurant.closing_time }}</p>
-      <p>Address: {{ restaurant.address }}</p>
-      <p>Phone Number: {{ restaurant.phone }}</p>
-      <p>{{ restaurant.description }}</p>
-      <img class="restaurant-image" src="{{ restaurant.image }}" alt="">
-      {% if reservations %}
+
+      {% if reservations and restaurant.owner != user %}
       <ol>
         {% for reservation in reservations %}
         <li>
