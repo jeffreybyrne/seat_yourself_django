@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -6,10 +7,12 @@ from django.views.decorators.http import require_http_methods
 from restaurants.forms import LoginForm, ProfileForm, ReservationForm, RestaurantForm
 from restaurants.models import Category, Profile, Restaurant
 
+
 def restaurants_list(request):
     restaurants = Restaurant.objects.all()
     context = {'restaurants': restaurants, 'title': 'Restaurants'}
     return render(request, 'restaurants_list.html', context)
+
 
 def restaurant_show(request, id):
     restaurant = Restaurant.objects.get(pk=id)
@@ -19,9 +22,12 @@ def restaurant_show(request, id):
         context['reservation_form'] = ReservationForm()
     return render(request, 'restaurant_details.html', context)
 
+
 @login_required
 def restaurant_edit(request, id):
     restaurant = Restaurant.objects.get(pk=id)
+    if restaurant.owner != request.user:
+        return HttpResponseRedirect('/restaurants/')
     if request.method == 'POST':
         form = RestaurantForm(request.POST, instance=restaurant)
         if form.is_valid():
