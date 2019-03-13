@@ -48,5 +48,15 @@
         <input type="submit" value="Place reservation">
       </form>
     {% endif %}
+
+    {% if related_restaurants.count > 0 %}
+    <p>Also owned by {{ restaurant.owner }}</p>
+    <ul>
+    {% for item in related_restaurants %}
+      <li><a href="{% url 'restaurant_show' id=item.pk %}">{{ item.name }}</a></li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+
 </main>
 {% endblock %}
