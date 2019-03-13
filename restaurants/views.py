@@ -1,4 +1,7 @@
+from datetime import datetime
+from datetime import timedelta
 from django.http import HttpResponseRedirect, HttpResponse
+from django.db.models import Count
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -94,7 +97,25 @@ def logout_view(request):
 
 @login_required
 def profile(request):
-    context = {'title': 'Profile'}
+    list_of_reservations = request.user.reservations_made.values('restaurant').order_by('restaurant').annotate(count=Count('restaurant'))
+    list_of_recent_reservations = request.user.reservations_made.filter(date__gte=(datetime.now()-timedelta(days=180))).values('restaurant').order_by('restaurant').annotate(count=Count('restaurant'))
+    results = []
+    for r in list_of_reservations:
+        if r['count'] >= 8:
+            results.append({
+                'restaurant': Restaurant.objects.get(pk=r["restaurant"]),
+                'count': r["count"]
+            })
+    new_results = []
+    for r in list_of_recent_reservations:
+        if r['count'] >= 3:
+            new_results.append({
+                'restaurant': Restaurant.objects.get(pk=r["restaurant"]),
+                'count': r["count"]
+            })
+    final_results = {x['restaurant']: x for x in results + new_results}.values()
+
+    context = {'title': 'Profile', 'reservations': final_results}
     if not Profile.exists_for_user(request.user):
         form = ProfileForm()
         context['form'] = form

@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Sum
 
+
 class Profile(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -32,6 +33,7 @@ class Category(models.Model):
     def image(self):
         return self.restaurants.all()[0].image
 
+
 class Restaurant(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owned_restaurants')
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='restaurants')
@@ -56,6 +58,7 @@ class Restaurant(models.Model):
         reserved_seats = reserved_seats['party_size__sum'] or 0
         return (reserved_seats + number_of_people) <= self.capacity
 
+
 class Reservation(models.Model):
     user = models.ForeignKey(User, related_name='reservations_made', on_delete=models.CASCADE)
     restaurant = models.ForeignKey(Restaurant, related_name='reservations', on_delete=models.CASCADE)
@@ -72,4 +75,3 @@ class Reservation(models.Model):
         date = self.date.strftime("%Y-%m-%d")
         time = self.time.strftime("%H:%M")
         return "{} {}".format(date, time)
-

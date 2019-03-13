@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
+
+
   <main class='profile'>
     <h2>{{ request.user.profile.full_name}}</h2>
     {% if form %}
@@ -11,6 +13,14 @@
         </form>
       </section>
     {% else %}
+    {% if reservations %}
+    <section class='frequently-booked'>
+      <h3>Your Most Frequently Booked</h3>
+      {% for item in reservations %}
+      <p><a href="{% url 'restaurant_show' id=item.restaurant.pk %}">{{ item.restaurant.name }}</a></p>
+      {% endfor %}
+    </section>
+    {% endif %}
       {% if request.user.reservations_made.exists %}
         <section class='my-reservations'>
           <h3>My reservations</h3>
@@ -28,7 +38,7 @@
             {% endfor %}
           </ol>
         </section>
-      {% endif%}
+      {% endif %}
       {% if request.user.owned_restaurants.exists %}
         <section class='owned-restaurants'>
           <h3>My restaurants</h3>
