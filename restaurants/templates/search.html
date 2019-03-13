@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<form action="{% url 'search' %}" method="get">
+  <label for="search">
+    <span>Search:</span>
+    <input type="search" id="search" name="query" value="{{ query }}" placeholder="Enter search term here">
+  </label>
+  <input type="submit" value="Search">
+</form>
+
+<ul>
+{% for item in restaurants %}
+  <li><a href="{% url 'restaurant_show' id=item.pk %}">{{ item.name }}</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}

@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -112,6 +112,7 @@ def profile_create(request):
         context = {'title': 'Profile', 'form': form}
         return render(request, 'profile.html', context)
 
+
 def signup(request):
     if request.user.is_authenticated:
         return redirect(reverse('user_profile'))
@@ -127,3 +128,15 @@ def signup(request):
     else:
         form = UserCreationForm()
     return render(request, 'signup.html', {'form': form})
+
+
+def search(request):
+    if 'query' in request.GET:
+        query = request.GET['query']
+        search_results = Restaurant.objects.filter(name__icontains=query) | Restaurant.objects.filter(address__icontains=query)
+        context = {'restaurants': search_results, 'query': query}
+        response = render(request, 'search.html', context)
+        return HttpResponse(response)
+    else:
+        response = render(request, 'search.html')
+        return HttpResponse(response)

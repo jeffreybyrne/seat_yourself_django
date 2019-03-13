@@ -7,6 +7,9 @@
     <li>
       <a class="underline" href="{% url 'categories_list' %}">Browse by cuisine</a>
     </li>
+    <li>
+      <a class="underline" href="{% url 'search' %}">Search</a>
+    </li>
       {% if request.user.is_authenticated %}
         <li>
           <a class="underline" href="{% url 'user_profile' %}">My Profile</a>
